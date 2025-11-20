@@ -7,7 +7,7 @@ import uuid
 # -----------------------------------------------------
 # CONFIGURATION Airtable
 # -----------------------------------------------------
-AT_TOKEN = "pat4ky59ivDvVqBku.0a1ed02ff3983c1b10cd3e6284789c58ad363eb60bf2e144585518bd7e4f98bd"
+AT_TOKEN = st.secrets(["airtable"]["token"])
 AT_TABLES = {
     "Users": {
         "base": "appHpJoih6uBVyjyC",
@@ -22,6 +22,7 @@ AT_TABLES = {
 # -----------------------------------------------------
 # CONFIGURATION GCS
 # -----------------------------------------------------
+GCS_INFO = json.loads(st.secrets["google"]["service_account"])
 BUCKET_NAME = "padel-matchs"
 
 # -----------------------------------------------------
@@ -109,17 +110,9 @@ def get_match_data(match_id, field):
 # -----------------------------------------------------
 # FUNCTIONS Videos
 # -----------------------------------------------------
-# from gcs-key import 
-
-# # Les stocker temporairement
-# with tempfile.NamedTemporaryFile(delete=False) as tmp:
-#     tmp.write(json.dumps(creds).encode("utf-8"))
-#     cred_path = tmp.name
-
 def store_video_to_gcs(file):
-    cred_path = "gcs-key.json"
     destination_blob_name = f"{uuid.uuid4()}.mp4"
-    client = storage.Client.from_service_account_json(cred_path)
+    client = storage.Client.from_service_account_info(GCS_INFO)
     bucket = client.bucket(BUCKET_NAME)
     blob = bucket.blob(destination_blob_name)
     blob.upload_from_file(file, content_type=file.type)
@@ -127,9 +120,8 @@ def store_video_to_gcs(file):
     return blob.public_url
 
 def delete_video_from_gcs(video_url):
-    cred_path = "gcs-key.json"
     destination_blob_name = video_url.split("/")[-1]
-    client = storage.Client.from_service_account_json(cred_path)
+    client = storage.Client.from_service_account_info(GCS_INFO)
     bucket = client.bucket(BUCKET_NAME)
     blob = bucket.blob(destination_blob_name)
     blob.delete()
