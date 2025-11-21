@@ -3,6 +3,7 @@ import pyairtable as at
 from google.cloud import storage
 import tempfile
 import uuid
+import json
 
 # -----------------------------------------------------
 # CONFIGURATION Airtable
