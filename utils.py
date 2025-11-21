@@ -3,7 +3,6 @@ import pyairtable as at
 from google.cloud import storage
 import tempfile
 import uuid
-import json
 
 # -----------------------------------------------------
 # CONFIGURATION Airtable
@@ -23,7 +22,7 @@ AT_TABLES = {
 # -----------------------------------------------------
 # CONFIGURATION GCS
 # -----------------------------------------------------
-GCS_INFO = json.loads(st.secrets["google-service_account"])
+GCS_INFO = st.secrets["google-service_account"]
 BUCKET_NAME = "padel-matchs"
 
 # -----------------------------------------------------
