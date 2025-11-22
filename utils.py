@@ -3,6 +3,8 @@ import pyairtable as at
 from google.cloud import storage
 import tempfile
 import uuid
+import smtplib
+from email.message import EmailMessage
 
 # -----------------------------------------------------
 # CONFIGURATION Airtable
@@ -78,6 +80,31 @@ def update_password(token, password):
     # Mise à jour du record
     updated_user = table.update(token, {"password": password})
     return {"token": updated_user.get("id")}
+
+def send_reset_password_email(email):
+    # Retrieve SMTP elements from streamlit secrets
+    smtp_server = st.secrets["email"]["smtp_server"]
+    smtp_port = st.secrets["email"]["smtp_port"]
+    sender_email = st.secrets["email"]["sender_email"]
+    app_password = st.secrets["email"]["app_password"]
+    
+    # Prepare email content and topic
+    sender = "simeopot@gmail.com"
+    topic = "Reset your password"
+    content = "Clic on this link and reset your password"
+
+    # Create a text/plain message
+    msg = EmailMessage()
+    msg.set_content(content)
+    msg['Subject'] = topic
+    msg['From'] = sender
+    msg['To'] = email
+
+
+    with smtplib.SMTP_SSL(smtp_server, smtp_port) as smtp:
+        smtp.login(sender_email, app_password)
+        smtp.send_message(msg)
+        smtp.quit()
 
 # -----------------------------------------------------
 # FUNCTIONS Matches
