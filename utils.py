@@ -81,7 +81,7 @@ def update_password(token, password):
     updated_user = table.update(token, {"password": password})
     return {"token": updated_user.get("id")}
 
-def send_reset_password_email(email):
+def send_email(to_email, type):
     # Retrieve SMTP elements from streamlit secrets
     smtp_server = st.secrets["email"]["smtp_server"]
     smtp_port = st.secrets["email"]["smtp_port"]
@@ -89,22 +89,26 @@ def send_reset_password_email(email):
     app_password = st.secrets["email"]["app_password"]
     
     # Prepare email content and topic
-    sender = "simeopot@gmail.com"
-    topic = "Reset your password"
-    content = "Clic on this link and reset your password"
+    sender = "Padel match analyser"
+    if type == "reset_password":
+        topic = "Reset your password"
+        content = "Clic on this link and reset your password"
+    else:
+        topic, content = None, None
 
     # Create a text/plain message
-    msg = EmailMessage()
-    msg.set_content(content)
-    msg['Subject'] = topic
-    msg['From'] = sender
-    msg['To'] = email
+    if topic and content and to_email:
+        msg = EmailMessage()
+        msg.set_content(content)
+        msg['Subject'] = topic
+        msg['From'] = sender
+        msg['To'] = to_email
 
 
-    with smtplib.SMTP_SSL(smtp_server, smtp_port) as smtp:
-        smtp.login(sender_email, app_password)
-        smtp.send_message(msg)
-        smtp.quit()
+        with smtplib.SMTP_SSL(smtp_server, smtp_port) as smtp:
+            smtp.login(sender_email, app_password)
+            smtp.send_message(msg)
+            smtp.quit()
 
 # -----------------------------------------------------
 # FUNCTIONS Matches
