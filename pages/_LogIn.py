@@ -20,7 +20,10 @@ password = st.text_input("Mot de passe", type="password")
 with st.container(horizontal=True):
     # Reset password
     if st.button("Mot de passe oublié ?", type="tertiary"):
-        send_reset_password_email("simeo.potiron@laposte.net")
+        send_email(
+            to_email="simeo.potiron@laposte.net", 
+            type="reset_password"
+        )
 
     # Login
     if st.button("Connexion") or password:
