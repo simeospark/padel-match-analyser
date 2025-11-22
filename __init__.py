@@ -1,2 +1,2 @@
-from padel-match-analyser.utils import *
-from padel-match-analyser.templates import *
+from .utils import *
+from .templates import *
